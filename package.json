@@ -1,0 +1,19 @@
+{
+  "name": "ai-forge",
+  "version": "1.0.0",
+  "description": "星核 AI-Forge · 零依赖、单文件、可验证的世界级 AI 核心（数值线性代数 + 机器学习 + 深度学习）",
+  "main": "src/ai-forge.js",
+  "scripts": {
+    "test": "node test/run.js",
+    "build": "node tools/build-html.js"
+  },
+  "keywords": ["ai", "machine-learning", "deep-learning", "linear-algebra", "svd", "jacobi", "neural-network", "attention", "transformer", "zero-dependency"],
+  "author": "晨星 (CJX0712)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CJX0712/xinghe-ai-forge.git"
+  },
+  "bugs": { "url": "https://github.com/CJX0712/xinghe-ai-forge/issues" },
+  "homepage": "https://github.com/CJX0712/xinghe-ai-forge#readme"
+}

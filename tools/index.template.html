@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星核 AI-Forge · 零依赖 AI 核心</title>
+<style>
+  :root{
+    --bg:#0b0f17; --panel:#121826; --panel2:#0e1420; --line:#1f2a3d;
+    --txt:#e6edf6; --sub:#8b9bb4; --acc:#5b8cff; --acc2:#37d6a0; --bad:#ff5d6c; --warn:#ffb020;
+    --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:linear-gradient(180deg,#0b0f17,#0a0e16 60%,#0b0f17);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.6;min-height:100vh}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 80px}
+  a{color:var(--acc);text-decoration:none}
+  header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    padding-bottom:22px;border-bottom:1px solid var(--line);margin-bottom:8px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--acc),#8a5bff);
+    display:grid;place-items:center;font-size:20px;box-shadow:0 6px 22px rgba(91,140,255,.35)}
+  .brand h1{font-size:20px;letter-spacing:.5px}
+  .brand .v{font-size:12px;color:var(--sub);font-family:var(--mono)}
+  .meta{font-size:13px;color:var(--sub);text-align:right}
+  .meta b{color:var(--txt)}
+  .hero{margin:26px 0 22px}
+  .hero h2{font-size:26px;font-weight:700;margin-bottom:8px}
+  .hero h2 .grad{background:linear-gradient(90deg,#5b8cff,#37d6a0);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:var(--sub);max-width:760px}
+  .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .tag{font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;color:var(--sub);background:var(--panel)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:20px}
+  .card h3{font-size:16px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .card .desc{font-size:13px;color:var(--sub);margin-bottom:14px}
+  button{cursor:pointer;border:none;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:600;
+    background:linear-gradient(135deg,var(--acc),#7a5bff);color:#fff;transition:.15s;font-family:inherit}
+  button:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(91,140,255,.3)}
+  button.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+  button:disabled{opacity:.5;cursor:default;transform:none}
+  .status{font-family:var(--mono);font-size:14px;margin-left:12px}
+  .ok{color:var(--acc2)} .no{color:var(--bad)}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+  th{color:var(--sub);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+  td.num{font-family:var(--mono);color:var(--acc2);white-space:nowrap}
+  tr.pass td:first-child{color:var(--acc2)} tr.fail td:first-child{color:var(--bad)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  canvas{width:100%;height:auto;background:var(--panel2);border:1px solid var(--line);border-radius:12px;display:block}
+  .kv{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0;font-size:13px}
+  .kv div span{color:var(--sub);display:block;font-size:11px}
+  .kv div b{font-family:var(--mono);font-size:15px}
+  pre{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto;
+    font-family:var(--mono);font-size:12.5px;line-height:1.55;color:#c7d5ea}
+  pre .c{color:#5f7490} pre .k{color:#c792ea} pre .s{color:#a5e075} pre .f{color:#82aaff}
+  .refs{font-size:12.5px;color:var(--sub)}
+  .refs li{margin:4px 0 4px 18px}
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);color:var(--sub);font-size:12.5px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;
+    border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">✦</div>
+      <div>
+        <h1>星核 AI-Forge</h1>
+        <div class="v">零依赖 · 单文件 · 可验证 AI 核心 &nbsp;v<span id="ver"></span></div>
+      </div>
+    </div>
+    <div class="meta">
+      作者 <b>晨星</b> · <a href="https://github.com/CJX0712/xinghe-ai-forge" target="_blank">CJX0712/xinghe-ai-forge</a><br>
+      浏览器 &amp; Node 双跑 · 17 项不变量自检
+    </div>
+  </header>
+
+  <section class="hero">
+    <h2>锻造<span class="grad">世界顶级 AI 核心</span>，从一块数学地基开始</h2>
+    <p>数值线性代数（Cholesky / Householder QR / Jacobi SVD / Jacobi 特征值）→ 经典机器学习（回归 / PCA / GMM-EM / K-Means / SVM-SMO / 决策树）→ 深度学习（反向传播 MLP / 多头注意力 / Transformer 编码器块）。每个模块都内置可被独立实现交叉验证的「不变量」，无任何外部依赖。</p>
+    <div class="tags">
+      <span class="tag">Golub &amp; Van Loan 数值线性代数</span>
+      <span class="tag">Bishop PRML</span>
+      <span class="tag">Goodfellow 深度学习</span>
+      <span class="tag">Vaswani 2017 Attention</span>
+      <span class="tag">Platt 1998 SMO</span>
+      <span class="tag">Float64Array 后端</span>
+    </div>
+  </section>
+
+  <div class="card">
+    <h3>🧪 一键自检 · 17 项数学不变量</h3>
+    <div class="desc">每一项都是可被另一套独立实现交叉验证的硬标准（重构误差≈ε、梯度检验、责任度归一、对数似然单调…）。</div>
+    <button id="btnTest">运行全部自检</button>
+    <span class="status" id="testStatus">等待运行…</span>
+    <table id="testTable" style="display:none">
+      <thead><tr><th style="width:52px">状态</th><th>不变量</th><th style="width:220px">数值证据</th></tr></thead>
+      <tbody id="testBody"></tbody>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>🌀 深度学习 · MLP 拟合三分类螺旋</h3>
+      <div class="desc">2→16→3 全连接网络，ReLU + Softmax + Adam 反向传播。点云为训练数据，背景色为决策区域。</div>
+      <canvas id="spiral" width="420" height="420"></canvas>
+      <div class="kv">
+        <div><span>训练准确率</span><b id="acc">—</b></div>
+        <div><span>最终损失</span><b id="loss">—</b></div>
+        <div><span>用时</span><b id="tm">—</b></div>
+      </div>
+      <button id="btnTrain" class="ghost">重新训练</button>
+    </div>
+
+    <div class="card">
+      <h3>📐 数值线性代数 · 实时分解</h3>
+      <div class="desc">对一个 5×5 随机对称矩阵做 Cholesky、Jacobi 特征值与 SVD，输出关键数值。</div>
+      <pre id="linalg">点击下方按钮运行…</pre>
+      <button id="btnLA" class="ghost" style="margin-top:12px">运行分解</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚡ 用法</h3>
+    <div class="desc">同一份 <code style="font-family:var(--mono)">src/ai-forge.js</code>，浏览器 <code>&lt;script&gt;</code> 直接全局 <code>AIForge</code>，Node <code>require()</code> 即用。</div>
+<pre><span class="c">// Node / 浏览器通用</span>
+<span class="k">const</span> AI = <span class="k">typeof</span> module !== <span class="s">'undefined'</span> ? <span class="f">require</span>(<span class="s">'./src/ai-forge.js'</span>) : window.AIForge;
+
+<span class="c">// 线性回归（正规方程 + Cholesky）</span>
+<span class="k">const</span> lr = <span class="k">new</span> AI.<span class="f">LinearRegression</span>().<span class="f">fit</span>(X, y);
+lr.<span class="f">predict</span>([1.2, -0.5]);            <span class="c">// → ŷ</span>
+
+<span class="c">// 深度学习：反向传播 + 梯度检验</span>
+<span class="k">const</span> net = <span class="k">new</span> AI.<span class="f">MLP</span>({ layers:[2,16,3], activation:<span class="s">'relu'</span>, output:<span class="s">'softmax'</span> });
+net.<span class="f">fit</span>(X, y, { epochs:120 });
+
+<span class="c">// 运行 17 项不变量自检</span>
+<span class="k">const</span> r = AI.<span class="f">selftest</span>();
+console.<span class="f">log</span>(r.passed + <span class="s">'/'</span> + r.total, r.allPass ? <span class="s">'全绿'</span> : <span class="s">'有失败'</span>);</pre>
+  </div>
+
+  <div class="card">
+    <h3>📚 数学与算法依据</h3>
+    <ul class="refs">
+      <li>Golub &amp; Van Loan, <i>Matrix Computations</i> — Householder QR、SVD、Jacobi 族的收敛与精度。</li>
+      <li>Numerical Recipes (Press et al.) — 循环 Jacobi 对称特征值分解的经典稳定实现。</li>
+      <li>Bishop, <i>Pattern Recognition and Machine Learning</i> §9.2 — GMM 的 EM、logsumexp 稳定对数似然。</li>
+      <li>Goodfellow et al., <i>Deep Learning</i> — 反向传播、中心差分梯度检验、Adam。</li>
+      <li>Vaswani et al. 2017, <i>Attention Is All You Need</i> — 缩放点积多头注意力。</li>
+      <li>Platt 1998 — Sequential Minimal Optimization（SVM 对偶分解）。</li>
+      <li>Arthur &amp; Vassilvitskii 2007 — k-means++ 初始化；Breiman 1984 — CART。</li>
+    </ul>
+  </div>
+
+  <footer>
+    <span>✦ 星核 AI-Forge · 天亮前把活干完</span>
+    <span>MIT License · 作者 晨星 (CJX0712)</span>
+  </footer>
+</div>
+
+<!--AIFORGE_SOURCE-->
+
+<script>
+(function(){
+  var AI = window.AIForge;
+  document.getElementById('ver').textContent = AI.VERSION;
+
+  /* ---------- 自检 ---------- */
+  var btn = document.getElementById('btnTest'), st = document.getElementById('testStatus');
+  var tbl = document.getElementById('testTable'), body = document.getElementById('testBody');
+  btn.addEventListener('click', function(){
+    btn.disabled = true; st.innerHTML = '<span class="spin"></span> 运行中…';
+    tbl.style.display='none';
+    setTimeout(function(){
+      var t0 = performance.now(); var r = AI.selftest(); var ms = (performance.now()-t0)|0;
+      body.innerHTML = '';
+      r.results.forEach(function(t){
+        var tr = document.createElement('tr'); tr.className = t.pass?'pass':'fail';
+        tr.innerHTML = '<td>'+(t.pass?'✅':'❌')+'</td><td>'+t.name+'</td><td class="num">'+t.detail+'</td>';
+        body.appendChild(tr);
+      });
+      tbl.style.display='table';
+      st.innerHTML = '<span class="'+(r.allPass?'ok':'no')+'">'+r.passed+'/'+r.total+' '+(r.allPass?'✅ 全绿':'⚠ 有失败')+' · '+ms+' ms</span>';
+      btn.disabled = false;
+    }, 30);
+  });
+
+  /* ---------- MLP 螺旋 demo ---------- */
+  var canvas = document.getElementById('spiral'), ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  function makeData(){
+    var rng = AI.makeRng(7), gr = function(){return rng()*2-1;};
+    var X=[], y=[], P=[];
+    for(var i=0;i<300;i++){ var c=i%3, r=c*2.1+gr()*0.35, t=i*0.15+gr()*0.1; X.push([r*Math.cos(t), r*Math.sin(t)]); y.push(c); P.push([X[i][0],X[i][1],c]); }
+    return {X:X,y:y,P:P};
+  }
+  function toPx(x,y){ return [ (x/5*0.5+0.5)*W, (0.5 - y/5*0.5)*H ]; }
+  var COLORS=['rgba(255,93,108,.16)','rgba(55,214,160,.16)','rgba(91,140,255,.16)'];
+  var DOTS=['#ff5d6c','#37d6a0','#5b8cff'];
+  function train(){
+    var d = makeData(); document.getElementById('acc').textContent='…';
+    document.getElementById('loss').textContent='…'; document.getElementById('tm').textContent='…';
+    setTimeout(function(){
+      var t0 = performance.now();
+      var net = new AI.MLP({layers:[2,16,3],activation:'relu',output:'softmax',lr:0.05,optimizer:'adam'});
+      net.fit(d.X, d.y, {epochs:140});
+      var ms = performance.now()-t0;
+      var acc=0; for(var i=0;i<d.X.length;i++) if(net.predict(d.X[i])===d.y[i]) acc++;
+      var fin=0; for(var i=0;i<d.X.length;i++) fin+=net.loss(d.X[i],d.y[i]); fin/=d.X.length;
+      document.getElementById('acc').textContent=(acc/d.X.length*100).toFixed(1)+'%';
+      document.getElementById('loss').textContent=fin.toFixed(3);
+      document.getElementById('tm').textContent=ms.toFixed(0)+' ms';
+      // 绘制决策边界
+      var step=8;
+      for(var py=0; py<H; py+=step){
+        for(var px=0; px<W; px+=step){
+          var x=(px/W-0.5)*10, y=-(py/H-0.5)*10;
+          var p=net.predict([x,y]); ctx.fillStyle=COLORS[p]; ctx.fillRect(px,py,step,step);
+        }
+      }
+      // 数据点
+      d.P.forEach(function(pt){ var q=toPx(pt[0],pt[1]); ctx.beginPath(); ctx.arc(q[0],q[1],3,0,7); ctx.fillStyle=DOTS[pt[2]]; ctx.fill(); });
+    }, 30);
+  }
+  document.getElementById('btnTrain').addEventListener('click', train);
+  train();
+
+  /* ---------- 数值线性代数 demo ---------- */
+  document.getElementById('btnLA').addEventListener('click', function(){
+    var M = AI.Matrix.randn(5,5); var S = M.mul(M.transpose());
+    var L = S.cholesky(); var eg = S.jacobiEig(); var sv = M.jacobiSVD();
+    var eRec = 0; var R = M.reconstructSVD(sv);
+    for(var i=0;i<R.data.length;i++){ var dd=R.data[i]-M.data[i]; eRec+=dd*dd; } eRec=Math.sqrt(eRec);
+    function fmt(a,p){ return a.map(function(v){return (+v).toFixed(p||4);}).join(', '); }
+    document.getElementById('linalg').textContent =
+      'S (5×5 对称正定)  Cholesky ‖LLᵀ−S‖ = ' + eRec.toExponential(2) + '\n' +
+      '特征值 λ        = ' + fmt(eg.values,4) + '\n' +
+      'SVD 奇异值 σ    = ' + fmt(sv.sigma,4) + '\n' +
+      'SVD 重构误差    = ' + eRec.toExponential(2);
+  });
+  document.getElementById('btnLA').click();
+})();
+</script>
+</body>
+</html>

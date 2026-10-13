@@ -1,0 +1,5 @@
+# 依赖与构建产物
+node_modules/
+.tmp_inline.js
+*.log
+.DS_Store
